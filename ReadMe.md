@@ -3,16 +3,14 @@
 本API旨在将各种服务器订阅，转换成可用于 QuantumultX & Surge 两个优秀的iOS客户端的格式，以及（全）平台的mellow ，clash等优秀代理工具.
 
 > API 以及 QuantumultX 教程更新相关信息，可以订阅此 **telegram channel**: https://t.me/QuanX_API
+>
+> 网页版： https://dove.589669.xyz/web
 
 目前已实现功能：
 
-- **QuantumultX**：
-  - 从 ***SS订阅/SSD订阅/SSR订阅/V2rayN 订阅/Surge(conf&list)/QuanX/trojan*** 转换成 **QuantumultX** 格式的订阅，并提供正则过滤，以及UDP/TFO/tls1.3参数的修改，以及多个订阅（托管）的合并等，以及emoji旗帜添加/删除，以及简单的节点重命名；
-  - 将服务器订阅转换为 quantumult 的配置（含YouTube跟Netflix等基本分流）
-- **Surge**：
-  - 从 ***Surge(conf&list)/SS订阅/SSD订阅/V2rayN订阅/trojan***，转换成 **Surge list**的格式链接，并提供正则过滤，多个订阅（托管）链接合并，以及emoji旗帜添加/删除，以及简单的节点重命名等
-- **Clash**：
-  - 从 ***SS订阅/SSD订阅/SSR订阅/V2rayN 订阅/Surge(conf&list)/QuanX*** 转换成 Clash 格式的 proxy-provider，并提供正则过滤，以及UDP/TFO参数的修改，以及多个订阅（托管）的合并等，以及emoji旗帜添加/删除，以及简单的节点重命名；
+- **QuantumultX / Surge / Clash**：
+  - 从 ***SS(D/R)订阅/V2rayN 订阅/Surge(conf&list)/QuanX/Clash/trojan*** 转换成 **QuantumultX / Surge / Clash** 格式的订阅(node-list / proxy provider)，并提供正则过滤，以及UDP/TFO/tls1.3参数的修改，以及多个订阅（托管）的合并等，以及emoji旗帜添加/删除，以及简单的节点重命名；
+  - 将服务器订阅转换为 **Quantumult X/Surge/Clash** 的配置（基于神机规则分流项目)
 - **Mellow**：
   - 将V2RayN或者quantumultX格式的Vmess订阅链接，转换成Mellow可用的配置文件conf，并提供节点正则过滤功能，emoji地区旗帜，rename以及简单排序等功能
 
@@ -20,13 +18,15 @@
 
 **更新说明：**
 
-- 2020-04-20: 增加 surge rule-set 到 Quantumult X 分流规则的转换“
-  - 路径为https://dove.589669.xyz/Rule2QX?，参数为 sub，policy
-  - 示范：https://dove.589669.xyz/Rule2QX?&sub=https://anti-ad.win/surge.txt&policy=reject
-- 2020-07-24: all2clash 支持 ssr 类型的转换
-- 2020-07-25: 新增两个参数：
-  - regdel，利用正则表达式删除节点名中字符；
-  - sort=x，节点随机排序
+- 2020-09-20: sort 参数增加指定规则排序
+  -  指定规则可以是正则表达式或简单关键词, 用"<" 跟 ">" 表示顺序
+  - sort=🇭🇰>🇸🇬>🇯🇵>🇺🇸 , 靠前排序
+  - sort=IEPL<IPLC<BGP , 靠后排序
+  - 关键词不限于节点名, 可以是节点信息的任意参数
+- 2020-09-22: 新增 QuantumultX/Clash 格式节点为源类型的转化
+- 2020-09-29: 提供在线版转换  https://dove.589669.xyz/web
+- 2020-10-07: 提供完整配置转换模式 (**Quantumult X - Surge -Clash**)
+- 2020-11-15: 增加 Quantumult X-Task-Gallery 的转换
 
 **常见错误：**
 
@@ -51,9 +51,6 @@ D. 请勿咨询如何使用等类似问题
 
 ####  1. 服务器订阅转换API
 
-其中，surge 不支持 ssr类型订阅链接    
-Clash 项目地址：https://github.com/Dreamacro/clash
-
 | 服务器订阅转换API   | 参数                                    | 说明                    | 要求                                                         | 状态 |
 | ------------------- | --------------------------------------- | ----------------------- | ------------------------------------------------------------ | ---- |
 | **路径**            | all2quanx<br />all2surge<br />all2clash | 支持的类型见上面说明    | https://dove.589669.xyz/all2quanx?<br />https://dove.589669.xyz/all2surge?<br />https://dove.589669.xyz/all2clash? | NA   |
@@ -64,7 +61,8 @@ Clash 项目地址：https://github.com/Dreamacro/clash
 | emoji 国家/地区符号 | emoji                                   | 可选                    | 参数为 -1(删除 emoji旗帜)；<br />1，台湾节点会显示台湾青天白日旗🇹🇼<br />2 (用于国行手机，解决无法显示台湾地区旗帜🇹🇼的问题)节点名前添加旗帜(如：🇨🇳️ 中国北京 BGP)；<br /> 11， 22，将emoji添加在节点名尾部（如：日本 IPLC 🇯🇵） | ✅    |
 | 节点重命名          | rename                                  | 可选，请先**urlencode** | 1. 格式为 rename=oldname@newname，多个rename可用+链接：<br />- 例如将 香港替换成HK，日本替换成JP，则参数为：香港@HK+日本@JP (记得拿去urlencode)<br /> 2. 在名字前/后增加字符，可分别用 A@ 跟 @B等单参数，例如：<br />- 在节点前增加 [SS]，节点名尾增加 [IPLC], 则rename参数为：[SS]@+@[IPLC]<br />1跟2当然是可以混用的，比如 “[SS]@+@[IPLC]+香港@HK+日本@JP” | ✅    |
 | 节点名字符删除      | Regdel                                  | 可选，请先**urlencode** | regdel=香.*IPLC                                              | ✅    |
-| 节点排序            | sort                                    | 可选                    | 参数为1，-1，x,  分别按节点名进行 **正序/逆序/随机** 排列    | ✅    |
+| 正则替换            | replace                                 | 可选，请先**urlencode** | 对整段信息生效(不仅是节点名)，replace=(relay.*=.*?)true@$1false | ✅    |
+| 节点排序            | sort                                    | 可选                    | 参数为1，-1，x，指定规则  分别按节点名进行 **正序/逆序/随机/指定规则** 排列<br />sort=🇭🇰>🇸🇬>🇯🇵>🇺🇸 , 靠前排序<br />sort=IEPL<IPLC<BGP , 靠后排序 | ✅    |
 | 证书验证            | cert                                    | 可选（仅限Quanx）       | 参数为1/0， 默认留空为1，即  "tls-verification=true "        | ✅    |
 | Tls1.3开启          | tls13                                   | 可选                    | 参数为 1 时，开启 tls1.3，即tls13=true                       | ✅    |
 | 订阅流量信息        | info                                    | 可选（仅限Quanx ）      | 参数为 1/0，默认为0<br />为 1时，会保留订阅 header 中的流量跟套餐信息(如有的话) | ✅️    |
